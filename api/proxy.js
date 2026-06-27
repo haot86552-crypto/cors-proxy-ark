@@ -14,16 +14,18 @@ export default async function handler(req, res) {
   }
 
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 60000);
     const response = await fetch(targetUrl, {
       method: req.method,
       headers: req.headers,
       body: req.body ? JSON.stringify(req.body) : undefined,
-      signal: AbortSignal.timeout(60000)
+      signal: controller.signal
     });
-
+    clearTimeout(timeoutId);
     const rawData = await response.text();
     res.status(response.status).send(rawData);
   } catch (err) {
-    res.status(504).send(`代理转发超时：${err.message}`);
+    res.status(504).send(`代理超时：${err.message}`);
   }
 }
