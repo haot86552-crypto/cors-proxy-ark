@@ -4,13 +4,14 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Headers', '*');
   res.setHeader('Access-Control-Max-Age', '86400');
 
+  // 浏览器预检OPTIONS请求必须返回200，否则跨域拦截
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
 
   const targetUrl = req.query.url;
   if (!targetUrl) {
-    return res.status(400).send('参数缺失，请携带 ?url=目标API地址');
+    return res.status(400).send('缺少url参数');
   }
 
   try {
